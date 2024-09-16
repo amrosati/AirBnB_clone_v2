@@ -1,9 +1,9 @@
 #!/usr/bin/python3
 """ Console Module """
 import cmd
-import json
 import re
 import sys
+import json
 from datetime import datetime
 from models import storage
 
@@ -233,7 +233,7 @@ class HBNBCommand(cmd.Cmd):
         key = c_name + "." + c_id
 
         try:
-            del(storage.all()[key])
+            del storage.all()[key]
             storage.save()
         except KeyError:
             print("** no instance found **")
