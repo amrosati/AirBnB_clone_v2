@@ -22,7 +22,7 @@ class FileStorage:
             return FileStorage.__objects
 
         filtered = {}
-        for key, obj in FileStorage.__objects:
+        for key, obj in FileStorage.__objects.items():
             if type(obj) is cls:
                 filtered[key] = obj
 
