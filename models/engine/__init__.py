@@ -44,7 +44,7 @@ attributes = {
                             "longitude": float,
                             "amenity_ids": list
                          },
-                "review": {
+                "Review": {
                             "place_id": str,
                             "user_id": str,
                             "text": str

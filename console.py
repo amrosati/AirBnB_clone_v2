@@ -170,7 +170,7 @@ class HBNBCommand(cmd.Cmd):
         new_instance = classes[args[0]](**params)
 
         print(new_instance.id)
-        storage.save()
+        new_instance.save()
 
     def help_create(self):
         """ Help information for the create method """
@@ -323,7 +323,7 @@ class HBNBCommand(cmd.Cmd):
             print('** no instance found **')
             return
 
-        cls_attributes = attributes()[args[0]]
+        cls_attributes = attributes[args[0]]
         if attr in cls_attributes:
             val = cls_attributes[attr](val)
         elif type_cast:

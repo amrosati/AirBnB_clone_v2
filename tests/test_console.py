@@ -209,7 +209,7 @@ EOF  all  count  create  destroy  help  quit  show  update
             HBNBCommand().onecmd('{}.show("{}")'.format(classname, uid))
 
         s = f.getvalue()
-        self.assertFalse(uid in s)
+        self.assertTrue(uid in s)
 
     def test_show_advanced_errors(self):
         """Tests show command with errors
@@ -304,7 +304,7 @@ EOF  all  count  create  destroy  help  quit  show  update
             HBNBCommand().onecmd('{}.destroy("{}")'.format(classname, uid))
 
         s = f.getvalue()[:-1]
-        self.assertFalse(len(s) == 0)
+        self.assertTrue(len(s) == 0)
 
         with patch('sys.stdout', new=StringIO()) as f:
             HBNBCommand().onecmd(".all()")
