@@ -5,7 +5,7 @@ import os
 from sqlalchemy import create_engine, URL
 from sqlalchemy.orm import sessionmaker, scoped_session
 
-from engine import classes
+from models.engine import classes
 from models.base_model import BaseModel, Base
 from models.user import User
 from models.place import Place
@@ -40,15 +40,15 @@ class DBStorage:
     def all(self, cls=None):
         """Returns all objects from the database
         """
-        objects, key = {}, "{}.{}"
+        objects = {}
 
         if cls:
-            result = self.__session.query(cls)
-            for obj in query.all():
+            result = self.__session.query(cls).all()
+            for obj in result:
                 key = "{}.{}".format(type(obj).__name__, obj.id)
                 objects[key] = obj
         else:
-            for model_name, model in classes:
+            for model_name, model in classes.items():
                 result = self.__session.query(model).all()
                 for obj in result:
                     key = "{}.{}".format(model_name, obj.id)
