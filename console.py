@@ -5,7 +5,9 @@ import re
 import sys
 import json
 from datetime import datetime
+
 from models import storage
+from models.engine import classes, attributes
 
 
 class HBNBCommand(cmd.Cmd):
@@ -13,8 +15,6 @@ class HBNBCommand(cmd.Cmd):
 
     # determines prompt for interactive/non-interactive modes
     prompt = '(hbnb) ' if sys.__stdin__.isatty() else ''
-
-    classes = storage.classes()
 
     def default(self, line):
         """Catching commands
@@ -74,7 +74,7 @@ class HBNBCommand(cmd.Cmd):
         if not classname:
             print('** class name missing **')
             return
-        if classname not in self.classes:
+        if classname not in classes:
             print('** class doesn\'t exist **')
             return
         if not _id:
@@ -85,10 +85,10 @@ class HBNBCommand(cmd.Cmd):
         key = "{}.{}".format(classname, _id)
 
         try:
-            attributes = storage.attributes()[classname]
+            cls_attributes = attributes()[classname]
             for attr, val in params_dict.items():
-                if attr in attributes:
-                    val = attributes[attr](val)
+                if attr in cls_attributes:
+                    val = cls_attributes[attr](val)
                 setattr(objects[key], attr, val)
 
             objects[key].save()
@@ -132,7 +132,7 @@ class HBNBCommand(cmd.Cmd):
             args (list): Contains parameters for the created object
 
         Returns:
-            dict: Contains key value pairs of the object attributes
+            dict: Contains key value pairs of the object cls_attributes
         """
         params = {}
 
@@ -162,12 +162,12 @@ class HBNBCommand(cmd.Cmd):
         if not args:
             print("** class name missing **")
             return
-        elif args[0] not in HBNBCommand.classes:
+        elif args[0] not in classes:
             print("** class doesn't exist **")
             return
 
         params = self.parse_params(args[1:])
-        new_instance = HBNBCommand.classes[args[0]](**params)
+        new_instance = classes[args[0]](**params)
 
         print(new_instance.id)
         storage.save()
@@ -191,7 +191,7 @@ class HBNBCommand(cmd.Cmd):
             print("** class name missing **")
             return
 
-        if c_name not in HBNBCommand.classes:
+        if c_name not in classes:
             print("** class doesn't exist **")
             return
 
@@ -222,7 +222,7 @@ class HBNBCommand(cmd.Cmd):
             print("** class name missing **")
             return
 
-        if c_name not in HBNBCommand.classes:
+        if c_name not in classes:
             print("** class doesn't exist **")
             return
 
@@ -249,14 +249,15 @@ class HBNBCommand(cmd.Cmd):
 
         if args:
             args = args.split(' ')[0]  # remove possible trailing args
-            if args not in HBNBCommand.classes:
+            if args not in classes:
                 print("** class doesn't exist **")
                 return
-            for k, v in storage._FileStorage__objects.items():
-                if k.split('.')[0] == args:
-                    print_list.append(str(v))
+            objects = storage.all(args)
+            for k, v in objects.items():
+                print_list.append(str(v))
         else:
-            for k, v in storage._FileStorage__objects.items():
+            objects = storage.all()
+            for k, v in objects.items():
                 print_list.append(str(v))
 
         print(print_list)
@@ -271,7 +272,7 @@ class HBNBCommand(cmd.Cmd):
         if not args:
             print('** class name missing **')
             return
-        if args not in self.classes:
+        if args not in classes:
             print('** class doesn\'t exist **')
             return
 
@@ -292,7 +293,7 @@ class HBNBCommand(cmd.Cmd):
         if not length:
             print('** class name missing **')
             return
-        if args[0] not in self.classes:
+        if args[0] not in classes:
             print('** class doesn\'t exist **')
             return
         if length == 1:
@@ -322,9 +323,9 @@ class HBNBCommand(cmd.Cmd):
             print('** no instance found **')
             return
 
-        attributes = storage.attributes()[args[0]]
-        if attr in attributes:
-            val = attributes[attr](val)
+        cls_attributes = attributes()[args[0]]
+        if attr in cls_attributes:
+            val = cls_attributes[attr](val)
         elif type_cast:
             try:
                 val = type_cast(val)
