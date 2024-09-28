@@ -65,13 +65,7 @@ class DBStorage:
         """Adds a new instance to the database
         """
         if obj:
-            try:
-                self.__session.add(obj)
-                self.__session.flush()
-                self.__session.refresh(obj)
-            except Exception as e:
-                self.__session.rollback()
-                raise e
+            self.__session.add(obj)
 
     def save(self):
         """Commits all changes of the current session
@@ -82,8 +76,8 @@ class DBStorage:
         """Deletes obj from the database
         """
         if obj:
-            self.__session.query(type(obj)).filter(type(obj).id == obj.id)\
-                                        .delete(synchronize_session=False)
+            self.__session.delete(obj)
+            self.save()
 
     def reload(self):
         """Creates all tables of the database and creates the session
@@ -99,4 +93,5 @@ class DBStorage:
     def close(self):
         """Closes the current session
         """
-        self._session.close()
+        if self.__session:
+            self._session.close()
