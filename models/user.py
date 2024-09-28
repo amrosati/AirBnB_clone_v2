@@ -14,5 +14,5 @@ class User(BaseModel, Base):
 
     email = Column(String(128), nullable=False) if is_db else ''
     password = Column(String(128), nullable=False) if is_db else ''
-    first_name = Column(String(128), nullable=False) if is_db else ''
-    last_name = Column(String(128), nullable=False) if is_db else ''
+    first_name = Column(String(128)) if is_db else ''
+    last_name = Column(String(128)) if is_db else ''
