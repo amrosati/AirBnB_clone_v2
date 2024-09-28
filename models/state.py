@@ -13,26 +13,17 @@ is_db = os.getenv('HBNB_TYPE_STORAGE') == 'db'
 class State(BaseModel, Base):
     """ State class """
     __tablename__ = 'states'
-    name = Column(
-                    String(128),
-                    nullable=False
-                 ) if is_db else ''
 
-    if is_db:
-        cities = relationship(
-                                'City',
-                                cascade='all, delete, delete-orphan',
-                                backref='state'
-                             )
-    else:
+    name = Column(String(128), nullable=False) if is_db else ''
+    cities = relationship('City',
+                          cascade='all, delete, delete-orphan',
+                          backref='state') if is_db else None
+
+    if not is_db:
         @property
         def cities(self):
             """Returns the cities in the state"""
             from models import storage
 
-            state_cities = []
-            for city in storage.all(City).values():
-                if value.state_id == self.id:
-                    state_cities.append(value)
-
-            return state_cities
+            return [obj for obj in storage.all(City).values()
+                    if obj.state_id == self.id]
