@@ -5,7 +5,7 @@ import os
 from sqlalchemy import create_engine, URL
 from sqlalchemy.orm import sessionmaker, scoped_session
 
-from models.base_model import BaseModel, Base
+from models.base_model import Base
 from models.user import User
 from models.place import Place
 from models.state import State
@@ -64,8 +64,7 @@ class DBStorage:
     def new(self, obj):
         """Adds a new instance to the database
         """
-        if obj:
-            self.__session.add(obj)
+        self.__session.add(obj)
 
     def save(self):
         """Commits all changes of the current session
@@ -77,7 +76,6 @@ class DBStorage:
         """
         if obj:
             self.__session.delete(obj)
-            self.save()
 
     def reload(self):
         """Creates all tables of the database and creates the session
@@ -88,10 +86,5 @@ class DBStorage:
                                         bind=self.__engine,
                                         expire_on_commit=False
                                      )
-        self.__session = scoped_session(SessionFactory)()
-
-    def close(self):
-        """Closes the current session
-        """
-        if self.__session:
-            self._session.close()
+        Session = scoped_session(SessionFactory)
+        self.__session = Session()

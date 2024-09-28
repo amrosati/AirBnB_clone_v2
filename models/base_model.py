@@ -13,14 +13,15 @@ is_db = os.getenv('HBNB_TYPE_STORAGE') == 'db'
 class BaseModel:
     """A base class for all hbnb models"""
 
-    id = Column(String(60), primary_key=True, nullable=False, unique=True)
-    created_at = Column(DATETIME, nullable=False, default=datetime.utcnow())
-    updated_at = Column(DATETIME, nullable=False, default=datetime.utcnow())
+    id = Column(String(60), primary_key=True,
+                nullable=False, unique=True) if is_db else ''
+    created_at = Column(DATETIME, nullable=False,
+                        default=datetime.utcnow()) if is_db else None
+    updated_at = Column(DATETIME, nullable=False,
+                        default=datetime.utcnow()) if is_db else None
 
     def __init__(self, *args, **kwargs):
         """Instatntiates a new model"""
-        from models import storage
-
         if not kwargs:
             self.id = str(uuid.uuid4())
             self.created_at = datetime.now()
@@ -73,4 +74,5 @@ class BaseModel:
 
     def delete(self):
         """Deletes the instance from the storage"""
+        from models import storage
         storage.delete(self)

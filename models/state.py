@@ -15,14 +15,17 @@ class State(BaseModel, Base):
     __tablename__ = 'states'
 
     name = Column(String(128), nullable=False) if is_db else ''
-    cities = relationship('City',
-                          cascade='all, delete, delete-orphan',
-                          backref='state') if is_db else None
 
-    if not is_db:
+    if is_db:
+        cities = relationship(
+                    'City',
+                    cascade='all, delete, delete-orphan',
+                    backref='state'
+                )
+    else:
         @property
         def cities(self):
-            """Returns the cities in the state"""
+            """Getter for the cities in the state"""
             from models import storage
 
             return [obj for obj in storage.all(City).values()
