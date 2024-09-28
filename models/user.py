@@ -2,6 +2,7 @@
 """This module defines a class User"""
 import os
 from sqlalchemy import Column, String
+from sqlalchemy.orm import relationship
 
 from models.base_model import BaseModel, Base
 
@@ -16,3 +17,5 @@ class User(BaseModel, Base):
     password = Column(String(128), nullable=False) if is_db else ''
     first_name = Column(String(128)) if is_db else ''
     last_name = Column(String(128)) if is_db else ''
+
+    places = relationship('Place', cascade="delete", backref='user')
