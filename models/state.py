@@ -5,7 +5,6 @@ from sqlalchemy import Column, String
 from sqlalchemy.orm import relationship
 
 from models.base_model import BaseModel, Base
-from models.city import City
 
 is_db = os.getenv('HBNB_TYPE_STORAGE') == 'db'
 
@@ -27,6 +26,7 @@ class State(BaseModel, Base):
         def cities(self):
             """Getter for the cities in the state"""
             from models import storage
+            from models.city import City
 
             return [obj for obj in storage.all(City).values()
                     if obj.state_id == self.id]

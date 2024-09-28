@@ -19,3 +19,4 @@ class User(BaseModel, Base):
     last_name = Column(String(128)) if is_db else ''
 
     places = relationship('Place', cascade="delete", backref='user')
+    reviews = relationship('Review', cascade="delete", backref='user')
