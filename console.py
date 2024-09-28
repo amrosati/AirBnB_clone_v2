@@ -137,21 +137,16 @@ class HBNBCommand(cmd.Cmd):
         params = {}
 
         for arg in args:
-            if "=" in arg:
-                key_val = arg.split('=', 1)
-                key = key_val[0]
-                val = key_val[1]
-                if not re.search('^".*"$', val):
-                    if '.' in val:
-                        val = float(val)
-                    else:
-                        val = int(val)
-                else:
-                    val = val.replace('"', '')
-                    if '_' in val:
-                        val = val.replace('_', ' ')
-
-                params[key] = val
+            key_val = arg.split('=')
+            key = key_val[0]
+            val = key_val[1]
+            if '"' in val:
+                val = val[1:-1].replace('_', ' ')
+            elif '.' in val:
+                val = float(val)
+            else:
+                val = int(val)
+            params[key] = val
 
         return params
 
