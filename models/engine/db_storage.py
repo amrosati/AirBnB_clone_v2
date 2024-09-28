@@ -5,7 +5,6 @@ import os
 from sqlalchemy import create_engine, URL
 from sqlalchemy.orm import sessionmaker, scoped_session
 
-from models.engine import classes
 from models.base_model import BaseModel, Base
 from models.user import User
 from models.place import Place
@@ -13,6 +12,8 @@ from models.state import State
 from models.city import City
 from models.amenity import Amenity
 from models.review import Review
+
+classes = [City, State]
 
 
 class DBStorage:
@@ -42,19 +43,23 @@ class DBStorage:
         """
         objects = {}
 
-        if cls:
-            result = self.__session.query(cls).all()
-            for obj in result:
-                key = "{}.{}".format(type(obj).__name__, obj.id)
-                objects[key] = obj
+        if not cls:
+            for model in classes:
+                objects.update(self.__query(model))
         else:
-            for model_name, model in classes.items():
-                result = self.__session.query(model).all()
-                for obj in result:
-                    key = "{}.{}".format(model_name, obj.id)
-                    objects[key] = obj
+            objects.update(self.__query(cls))
 
         return objects
+
+    def __query(self, model):
+        """Queries all objects of model
+        """
+        objs = {}
+        result = self.__session.query(model).all()
+        for obj in result:
+            objs[type(obj).__name__ + '.' + obj.id] = obj
+
+        return objs
 
     def new(self, obj):
         """Adds a new instance to the database
