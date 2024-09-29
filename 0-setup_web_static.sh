@@ -42,6 +42,7 @@ TEST_PAGE=\
 </html>
 "
 
+# shellcheck disable=SC2230
 if [[ "$(which nginx | grep -c nginx)" == '0' ]];
 then
 	apt-get update;
