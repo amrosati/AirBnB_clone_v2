@@ -49,14 +49,13 @@ def do_deploy(archive_path):
         put(archive_path, f"/tmp/{filename}")
         run(f"mkdir -p {dirpath}")
         run(f"tar -xzf /tmp/{filename} -C {dirpath}")
+        run(f"rm /tmp/{filename}"
         run(f"mv {dirpath}web_static/* {dirpath}")
-        run(f"rm -rf /tmp/{filename} {dirpath}web_static\
-              /data/web_static/current")
+        run(f"rm -rf {dirpath}web_static")
+        run("rm -rf /data/web_static/current")
         run(f"ln -s {dirpath} /data/web_static/current")
         print("New version deployed!")
-
-        return True
     except Exception:
-        pass
+        return False
 
-    return False
+    return True
