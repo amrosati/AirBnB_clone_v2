@@ -13,6 +13,9 @@ env.hosts = ["34.224.4.6", "18.208.120.244"]
 @runs_once
 def do_pack():
     """Packs static files
+
+    Returns:
+        str: Path to the packed static files, None otherwise
     """
     if not os.path.isdir("versions"):
         os.mkdir("versions")
@@ -37,6 +40,12 @@ def do_pack():
 
 def do_deploy(archive_path):
     """Distributes an archive to the web servers
+
+    Args:
+        archive_path (str): Path to the web static archive file
+
+    Returns:
+        bool: True if deployed successfully, False otherwise
     """
     if not os.path.exists(archive_path):
         return False
@@ -49,7 +58,7 @@ def do_deploy(archive_path):
         put(archive_path, f"/tmp/{filename}")
         run(f"mkdir -p {dirpath}")
         run(f"tar -xzf /tmp/{filename} -C {dirpath}")
-        run(f"rm /tmp/{filename}"
+        run(f"rm /tmp/{filename}")
         run(f"mv {dirpath}web_static/* {dirpath}")
         run(f"rm -rf {dirpath}web_static")
         run("rm -rf /data/web_static/current")
