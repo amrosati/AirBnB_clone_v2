@@ -4,18 +4,18 @@
 
 import os
 from datetime import datetime
-from fabric.api import local, runs_once, env, run, put
+from fabric.api import local, env, run, put
 
 # List of web servers
+env.user = 'ubuntu'
 env.hosts = ["34.224.4.6", "18.208.120.244"]
 
 
-@runs_once
 def do_pack():
-    """Packs static files
+    """Packs static files.
 
     Returns:
-        str: Path to the packed static files, None otherwise
+        str: Path to the packed static files, None otherwise.
     """
     if not os.path.isdir("versions"):
         os.mkdir("versions")
@@ -28,23 +28,26 @@ def do_pack():
         local(f"tar -cvzf {path} web_static")
 
         size = os.stat(archive_path).st_size
-        print(f"web_static packed: {path} -> {size} Bytes")
-    except Exception:
+        print(f"web_static packed: {path} -> {size}Bytes")
+    except:
         return None
 
     return path
 
 
 def do_deploy(archive_path):
-    """Distributes an archive to the web servers
+    """Distributes an archive to the web servers.
 
     Args:
-        archive_path (str): Path to the web static archive file
+        archive_path (str): Path to the web static archive file.
 
     Returns:
-        bool: True if deployed successfully, False otherwise
+        bool: True if deployed successfully, False otherwise.
     """
     try:
+        if not archive_path:
+            raise
+
         archive = archive_path.split('/')[-1]
         path = "/data/web_static/releases/" + archive.strip('.tgz')
 
@@ -59,7 +62,19 @@ def do_deploy(archive_path):
         run(f"ln -s {path} /data/web_static/current")
 
         print("New version deployed!")
-    except Exception:
+    except:
         return False
 
     return True
+
+
+def deploy():
+    """Packs and deploys static files.
+
+    Returns:
+        bool: True if everything finished successfully, False otherwise.
+    """
+    archive = do_pack()
+    deployed = do_deploy(archive)
+
+    return deployed
